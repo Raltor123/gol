@@ -159,7 +159,6 @@ void main_loop(game_state* state, sdl* s) {
 
 	SDL_Event event;
 
-
 	// Boucle principale
 	while (!quit_flag) {
 		// Temps mis pour la dernière frame
@@ -199,6 +198,40 @@ void main_loop(game_state* state, sdl* s) {
 		printf(", render: %.5fs (%.2f fps)\r", time_taken_print, 1 /(time_taken_sim + time_taken_print));
 	}
 	printf("\n");
+}
+
+
+/// Au lieu d'avoir une jeu de la vie,
+/// utilise le mode perf max et regarde combien de temps il a fallu pour calculer n étapes.
+void perf_test(game_state* state, sdl* s, size_t n) {
+	// Copie le tableau
+	board* tmp = board_copy(state->board);
+	board* tmp_next = board_copy(state->board_next_step);
+
+	struct timeval start, end;
+
+	SDL_Event event;
+
+	gettimeofday(&start, NULL);
+	size_t steps = n;
+	while (!quit_flag && steps > 0) {
+		while (SDL_PollEvent(&event))
+			if (event.type == SDL_EVENT_QUIT) quit_flag = 1;  // Quittage de l'application demandée
+
+		board_step(state->board, state->board_next_step);
+		steps--;
+	}
+	gettimeofday(&end, NULL);
+	double time_taken = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+	printf("Time to do %lu steps: %f seconds. (~%f fps)\n", n - steps, time_taken, (double)(n - steps) / time_taken);
+
+	// Récupère les anciens tableaux
+	board_free(state->board);
+	state->board = tmp;
+	board_free(state->board_next_step);
+	state->board_next_step = tmp_next;
+
+	main_loop(state, s);
 }
 
 int main(int argc, char** argv) {
@@ -276,13 +309,14 @@ int main(int argc, char** argv) {
 	// On initialise la gestion de signaux
 	signal(SIGINT, signal_handler);
 
-	main_loop(&state, s);
+	if (args.perf_test_steps > 0) perf_test(&state, s, args.perf_test_steps);
+	else main_loop(&state, s);
 
 	// Sortie douce et gentille
 	free(state.previous_key_states);
 	vector2_destroy(state.last_mouse_position);
-	board_free(b);
-	board_free(b2);
+	board_free(state.board);
+	board_free(state.board_next_step);
 	sdl_exit(s);
 	return 0;
 }

@@ -14,6 +14,7 @@ typedef struct board {
 
 board* board_create(size_t width, size_t height);
 void board_free(board*);
+board* board_copy(board*);
 
 // Retourne le bit (0 ou 1) à la position (x, y),
 // Return 0 en cas de problème.

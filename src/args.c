@@ -6,13 +6,14 @@
 
 int help(void) {
 	printf("Usage:\n");
-	printf("	./main [-gw|--game-width value] [-gh|--game-height value] [-b|--block-size value] [-p|--padding value] [-nd|--default-pattern] [-t|--threads value]\n");
+	printf("	./main [-gw|--game-width value] [-gh|--game-height value] [-b|--block-size value] [-p|--padding value] [-nd|--default-pattern] [-t|--threads value] [-pt|--perf-test value]\n");
 	printf("	game-width        :	size_t,	default: 64,	maximum width of the board\n");
 	printf("	game-height       :	size_t,	default: 64,	maximum height of the board\n");
 	printf("	block-size        :	size_t,	default: 10,	size of each cell\n");
 	printf("	padding           :	size_t,	default:  1,	padd every cell to make them more distinguishable\n");
 	printf("	no-default-pattern:	bool,	default:  t,	remove the basic cell layout at the begining.\n");
 	printf("	threads           :	uchar,	default:all,	how many threads to use (doesn't take hyper-threads, only physicals).\n");
+	printf("	perf-test         :	size_t,	default:  0,	Number of steps the program will do before starting the main loop. Don't do anything if 0.\n");
 	printf("Controls:\n");
 	printf("	Space      :	Pause / Play\n");
 	printf("	Up arrow   :	Increase play speed\n");
@@ -95,9 +96,11 @@ args parse_args(int argc, char** argv) {
 
 		} else if (strcmp(argv[i], "-t") == 0 || strcmp(argv[i], "--threads") == 0) {
 			if (i + 1 >= argc) return args; // invalid
-			unsigned char t = strtod(argv[++i], NULL);
-			if (t < args.threads)
-				args.threads = t;
+			args.threads = strtod(argv[++i], NULL);
+
+		} else if (strcmp(argv[i], "-pt") == 0 || strcmp(argv[i], "--perf-test") == 0) {
+			if (i + 1 >= argc) return args; // invalid
+			args.perf_test_steps = strtod(argv[++i], NULL);
 
 		} else {
 			return args;

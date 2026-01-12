@@ -11,6 +11,7 @@ typedef struct args {
 	size_t block_size;
 	size_t padding;
 	unsigned char threads;
+	size_t perf_test_steps;
 } args;
 
 /// Affiche l'aide dans le terminal et retourne 0.

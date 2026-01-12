@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define BLOCK_WIDTH (sizeof(size_t) * 8 - 2)
 
@@ -26,6 +27,15 @@ void board_free(board* b) {
 	if (!b) return;
 	if (b->data) free(b->data);
 	free(b);
+}
+
+board* board_copy(board* source) {
+	board* copy = board_create(source->sx, source->sy);
+	if (copy == NULL) return NULL;
+
+	memcpy(copy->data, source->data, ((source->sy+ 1) * source->width + 1) * sizeof(size_t));
+
+	return copy;
 }
 
 unsigned char board_get_bit(board* b, size_t x, size_t y) {
