@@ -185,7 +185,7 @@ void main_loop(game_state* state, sdl* s) {
 		printf("Time to simulate: %.5fs", time_taken_sim);
 
 		// Affichage
-		if (!state->unlimited_simulation) {
+		if (!state->unlimited_simulation || !state->playing) {
 			// Reset l'écran
 			SDL_SetRenderDrawColor(s->renderer, 0, 0, 0, 255);
 			SDL_RenderClear(s->renderer);
