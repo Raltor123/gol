@@ -185,13 +185,14 @@ void main_loop(game_state* state, sdl* s) {
 		printf("Time to simulate: %.5fs", time_taken_sim);
 
 		// Affichage
-		// Reset l'écran
-		SDL_SetRenderDrawColor(s->renderer, 0, 0, 0, 255);
-		SDL_RenderClear(s->renderer);
-		// Dessiner les objets
-		sdl_board_print(s, state->board, s->block_size, s->padding);
-		SDL_RenderPresent(s->renderer);
-
+		if (!state->unlimited_simulation) {
+			// Reset l'écran
+			SDL_SetRenderDrawColor(s->renderer, 0, 0, 0, 255);
+			SDL_RenderClear(s->renderer);
+			// Dessiner les objets
+			sdl_board_print(s, state->board, s->block_size, s->padding);
+			SDL_RenderPresent(s->renderer);
+		}
 		// Temps d'affichage
 		gettimeofday(&t1, NULL);
 		double time_taken_print = (t1.tv_sec - t2.tv_sec) + (t1.tv_usec - t2.tv_usec) / 1000000.0;

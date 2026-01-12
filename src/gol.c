@@ -175,7 +175,7 @@ void board_step(board* b, board* nb) {
 
 	// --- Copy the overlapping cells & fill vertical boundary ---
 	size_t idx = 0;
-	// #pragma omp parallel for
+	//#pragma omp parallel for
 	for (size_t x = 0; x < b->width-1; x++) {
 		idx++;
 		for (size_t y = 0; y < b->sy; y++) {
